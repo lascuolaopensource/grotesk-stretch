@@ -49,6 +49,7 @@ function setup() {
 	allLetters.push(getGlyphs("scuola", 1))
 	allLetters.push(getGlyphs("open", 2))
 	allLetters.push(getGlyphs("source", 3))
+	// allLetters.push(getGlyphs("alessandro", 4))
 
 
 	createCanvas(document.body.clientWidth,document.body.clientHeight);
@@ -59,8 +60,11 @@ function setup() {
 	fft.setInput(mic);
 
 }	
-
+var r =0
 function draw() {
+	// translate(width/2,height/2)
+	// rotate(r+=.01)
+
 	background("#fff")
 	fill(0)
 	stroke(0)
@@ -69,6 +73,7 @@ function draw() {
 	var spectrum = fft.analyze();
 	noStroke();	
 	drawRow(spectrum)
+	// translate(-width/2,-height/2)
 
 }
 
