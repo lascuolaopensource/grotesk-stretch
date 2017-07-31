@@ -1,4 +1,3 @@
-
 var glyphs = [];
 var altMode = false;
 var val = 0;
@@ -13,6 +12,7 @@ var displayedGlyphs = [];
 var previousCursor = 0;
 var currentCursor = 0;
 var currentLine = 0;
+
 
 function preload() {
 	result[0] = [];
