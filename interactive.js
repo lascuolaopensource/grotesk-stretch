@@ -1,3 +1,4 @@
+var SCALE = .1;
 var altMode = false;
 var val = 0;
 var acc = .5;
@@ -62,20 +63,17 @@ function setup() {
 }	
 var r =0
 function draw() {
-	// translate(width/2,height/2)
-	// rotate(r+=.01)
-
 	background("#fff")
 	fill(0)
 	stroke(0)
-	scale(.1)
+	scale(SCALE)
 
 	var spectrum = fft.analyze();
 	noStroke();	
 	drawRow(spectrum)
-	// translate(-width/2,-height/2)
-
+	colorMode(HSB)
 }
+
 
 function drawRow(spectrum) {
 
@@ -86,11 +84,16 @@ function drawRow(spectrum) {
 
 	var interval = Math.floor(spectrum.length / totalLetters);
 	var av = 0;
-	var cc =0;
+	var cc =0; // counter letter
+	var cr =0; // counter rows
+	var clr =0; // counter letter for row
 	var totalAv = 0;
 	var values = [];
 
-	
+	var barwidth = (width/SCALE)/spectrum.length;
+
+	fill(cr * 100, 100, 100)
+
 	for (var i = 0; i < spectrum.length; i++){
 		av+= map(spectrum[i], 0,255,0,1);
 		if(i % interval == 0 && i) {
@@ -98,9 +101,17 @@ function drawRow(spectrum) {
 			totalAv += av/interval;
 			av = 0;
 			cc++;
-
+			clr++;
+			if(clr == allLetters[cr].length) {
+				cr++
+				clr =0;
+				fill(cr * 100, 100, 100)
+			}
 		}
+		rect(i*barwidth, height/SCALE-spectrum[i] - 100/SCALE, barwidth, spectrum[i]);
 	}
+
+	fill(0);
 	cc =0;
 	for (var k = 0; k < allLetters.length; k++) {
 		var currentLetters = allLetters[k]
