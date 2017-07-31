@@ -22,21 +22,42 @@ function preload() {
 		result[letter][1] = loadStrings('set1/'+letter+'_.glif')
 	}
 }
+var currentLetters = [];
+var allLetters = [];
 
 function addGlyphs() {
-	
+
 	for (var i = 0; i < letters.length; i++) {
 		var letter = letters[i];
-		stretchyLetters[letter] = new Letter((100/.1),(100/.1)*i + 100,letter, result[letter]);
+		stretchyLetters[letter] = new Letter(0,0,letter, result[letter]);
 	}
+
+}
+
+function getGlyphs(mys, ypos){
+	var arr = [];
+	for (var i = 0; i < mys.length; i++) {
+		var letter = mys[i].toUpperCase()
+		arr.push(new Letter(0,900 * ypos, letter, result[letter]));
+	}
+	return arr;
 }
 
 function setup() {
 	addGlyphs();
+	allLetters.push(getGlyphs("la", 0))
+	allLetters.push(getGlyphs("scuola", 1))
+	allLetters.push(getGlyphs("open", 2))
+	allLetters.push(getGlyphs("source", 3))
+
+
 	createCanvas(document.body.clientWidth,document.body.clientHeight);
-	fft = new p5.FFT(0.8,16);
-	sound.amp(0.2)
-	sound.loop();
+
+	var mic = new p5.AudioIn();
+	mic.start();
+	fft = new p5.FFT();
+	fft.setInput(mic);
+
 }	
 
 function draw() {
@@ -45,34 +66,54 @@ function draw() {
 	stroke(0)
 	scale(.1)
 
-	var spectrum = fft.waveform();
+	var spectrum = fft.analyze();
 	noStroke();	
-
-
-	var currentLetters = [stretchyLetters["A"], stretchyLetters["B"], stretchyLetters["C"], stretchyLetters["D"]]
-	
-	if(frameCount % 10 == 0){
-		var av = 0;
-		var cc =0;
-		for (var i = 0; i <= spectrum.length; i++){
-
-			if(i%4 == 0 && i) {
-				currentLetters[cc].val = av *2;
-				av = 0;
-				cc++;
-			}
-			av+= map(spectrum[i], -1,1,0,1)/4;
-		}
-	} 
-
-	for (var i = 0; i < currentLetters.length; i++) {
-		currentLetters[i].draw();
-		if(currentLetters[i].val >0) currentLetters[i].val -=0.01
-	}
+	drawRow(spectrum)
 
 }
 
+function drawRow(spectrum) {
 
+	var totalLetters =0;
+	allLetters.forEach(function(d){
+		totalLetters+=d.length;
+	})
+
+	var interval = Math.floor(spectrum.length / totalLetters);
+	var av = 0;
+	var cc =0;
+	var totalAv = 0;
+	var values = [];
+
+	
+	for (var i = 0; i < spectrum.length; i++){
+		av+= map(spectrum[i], 0,255,0,1);
+		if(i % interval == 0 && i) {
+			values.push(av/interval)
+			totalAv += av/interval;
+			av = 0;
+			cc++;
+
+		}
+	}
+	cc =0;
+	for (var k = 0; k < allLetters.length; k++) {
+		var currentLetters = allLetters[k]
+		var advance = 0;
+		for (var i = 0; i < currentLetters.length; i++) {
+			if(frameCount % 10 == 0) {
+				currentLetters[i].targetVal = values[cc];
+			}
+			currentLetters[i].x = advance;
+			currentLetters[i].draw();
+			currentLetters[i].val += (currentLetters[i].targetVal -currentLetters[i].val) *.2;
+			advance += currentLetters[i].advance;
+			cc++;
+		}
+	}
+
+
+}
 
 var Letter = function(x,y, letter, stringsArray) {
 
@@ -107,6 +148,7 @@ var Letter = function(x,y, letter, stringsArray) {
 	}
 
 	self.val = 0;
+	self.targetVal = 0;
 
 }
 
@@ -114,7 +156,7 @@ Letter.prototype.constructor = Letter;
 
 
 Letter.prototype.draw = function() {
-	
+
 	var n = this.val;
 	beginShape()
 	for (var j = 0; j < this.glyphs[0].contours.length; j++) {
@@ -127,7 +169,7 @@ Letter.prototype.draw = function() {
 	}
 	endShape();
 
-	this.advance = map(val, 0, 1, +this.glyphs[1].advance, +this.glyphs[0].advance);
+	this.advance = map(n, 0, 1, +this.glyphs[1].advance, +this.glyphs[0].advance);
 }
 
 
