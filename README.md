@@ -15,6 +15,12 @@ A stretching composer. The longer you press the more you stretch!
 ## Usage
 You must run this on a web server. Quickest way to achieve this on macOS is to use the built in Python server.
 
+## TODO
+- Add curves to the displayed characters as per the .glif file. All curves are quadratic beziers
+- Add more glyphs
+- General clean up and optimization
+
+
 ## Thanks
 Built in one day at [SOS](http://www.lascuolaopensource.xyz) in Bari. Thanks to Daniele Capo and all the other great people at SOS for making this happen.
 
