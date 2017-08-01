@@ -16,6 +16,6 @@ A stretching composer. The longer you press the more you stretch!
 You must run this on a web server. Quickest way to achieve this on macOS is to use the built in Python server.
 
 ## Thanks
-Built in one day at SOS in Bari. Thanks to Daniele Capo and all the other great people at SOS for making this happen.
+Built in one day at [SOS](http://www.lascuolaopensource.xyz) in Bari. Thanks to Daniele Capo and all the other great people at SOS for making this happen.
 
 Bari – July, 2017
