@@ -1,0 +1,20 @@
+{
+  "name": "sos_groteskstrech",
+  "version": "1.0.0",
+  "description": "An experiment to create tools that make use of the \"stretching\" abilities of the SOS font.  The stretched letter is obtained by the interpolation of two glyphs rather than stretching all the points linearly.",
+  "main": "p5.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lascuolaopensource/grotesk-stretch.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lascuolaopensource/grotesk-stretch/issues"
+  },
+  "homepage": "https://github.com/lascuolaopensource/grotesk-stretch#readme",
+  "dependencies": {}
+}

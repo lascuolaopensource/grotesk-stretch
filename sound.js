@@ -1,5 +1,6 @@
+var isWaveform = false;
 var myScale = .1;
-var myText = ["la", "scuola", "open", "source"];
+var myText = ["one", "two", "three"];
 var result = [];
 var letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
 var parser = new DOMParser();
@@ -41,7 +42,6 @@ function setup() {
 	addGlyphs();
 
 	for (var i = 0; i < myText.length; i++) {
-		console.log(myText[i])
 		allLetters.push(getGlyphs(myText[i], i))
 	}
 
@@ -60,20 +60,20 @@ function draw() {
 	stroke(0)
 	scale(myScale)
 
-	var spectrum = fft.analyze();
 	noStroke();	
-	drawRow(spectrum)
+	drawRows()
 
 }
 
 
-function drawRow(spectrum) {
+function drawRows() {
 
 	var totalLetters =0;
 	allLetters.forEach(function(d){
 		totalLetters+=d.length;
 	})
 
+	var spectrum = isWaveform ? fft.waveform() : fft.analyze();
 	var interval = Math.floor(spectrum.length / totalLetters);
 	var av = 0;
 	var cc =0; // counter letter
@@ -85,12 +85,10 @@ function drawRow(spectrum) {
 	var barwidth = (width/myScale)/spectrum.length;
 
 
-	
-
 	if(isKeyPressed) text(myText[cr].toUpperCase(), 30, height/myScale - 80/myScale);
 
 	for (var i = 0; i < spectrum.length; i++){
-		av+= map(spectrum[i], 0,255,0,1);
+		av+= isWaveform ? map(spectrum[i], -1,1,0,1) : map(spectrum[i], 0,255,0,1);
 		if(i % interval == 0 && i) {
 			values.push(av/interval)
 			totalAv += av/interval;
@@ -117,13 +115,16 @@ function drawRow(spectrum) {
 
 	fill(0);
 	cc =0;
+
 	for (var k = 0; k < allLetters.length; k++) {
 		var currentLetters = allLetters[k]
+		var maxLength = currentLetters.length * 1294; // arbitrary value
+		var 
 		var advance = 0;
+		var totalAdvance = 0
+
 		for (var i = 0; i < currentLetters.length; i++) {
-			if(frameCount % 10 == 0) {
-				currentLetters[i].targetVal = values[cc];
-			}
+			currentLetters[i].targetVal = values[cc];			
 			currentLetters[i].x = advance;
 			currentLetters[i].draw();
 			currentLetters[i].val += (currentLetters[i].targetVal -currentLetters[i].val) *.2;
